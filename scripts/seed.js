@@ -6,7 +6,7 @@
  *
  * Creates:
  *  - 3 users (admin, analyst, viewer)
- *  - 30+ transactions across multiple months and categories
+ *  - 25 transactions across multiple months and categories
  */
 
 const { PrismaClient } = require('@prisma/client');

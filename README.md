@@ -181,12 +181,12 @@ All responses follow a consistent structure:
 npm run dev
 
 # Run individual phase tests
-node scripts/test-phase2.js    # Auth & User Management (35 tests)
+node scripts/test-phase2.js    # Auth & User Management (44 tests)
 node scripts/test-phase3.js    # Transaction CRUD (49 tests)
 node scripts/test-phase4.js    # Dashboard Analytics (36 tests)
 ```
 
-**Total: 120 integration tests**
+**Total: 129 integration tests**
 
 ## Scripts
 
