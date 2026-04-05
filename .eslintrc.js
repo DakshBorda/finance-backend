@@ -1,0 +1,18 @@
+module.exports = {
+  env: {
+    node: true,
+    es2021: true,
+    jest: true,
+  },
+  parserOptions: {
+    ecmaVersion: 'latest',
+  },
+  rules: {
+    'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+    'no-console': 'off',
+    'prefer-const': 'error',
+    'no-var': 'error',
+    'eqeqeq': ['error', 'always'],
+    'no-throw-literal': 'error',
+  },
+};
