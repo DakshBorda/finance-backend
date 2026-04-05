@@ -49,6 +49,7 @@ app.get('/health', (req, res) => {
     message: 'Server is running',
     data: {
       status: 'healthy',
+      version: '1.0.0',
       timestamp: new Date().toISOString(),
       uptime: `${Math.floor(process.uptime())}s`,
       environment: config.env,
@@ -58,9 +59,16 @@ app.get('/health', (req, res) => {
 
 // --------------- API Documentation ---------------
 
+// Swagger UI — interactive documentation
 app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customSiteTitle: 'Finance API Documentation',
 }));
+
+// Raw OpenAPI JSON — for Postman import, CI tools, code generation
+app.get('/api/v1/docs.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.json(swaggerSpec);
+});
 
 // --------------- API Routes ---------------
 

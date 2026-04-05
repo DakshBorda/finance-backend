@@ -13,6 +13,7 @@ async function startServer() {
     logger.info(`Server running on port ${PORT} in ${config.env} mode`);
     logger.info(`Health check: http://localhost:${PORT}/health`);
     logger.info(`API base URL: http://localhost:${PORT}/api/v1`);
+    logger.info(`API docs:     http://localhost:${PORT}/api/v1/docs`);
   });
 
   // ---- Graceful shutdown handling ----

@@ -85,24 +85,29 @@ async function seed() {
 
   // Create transactions (all owned by admin)
   const adminId = userMap['ADMIN'];
-  let created = 0;
 
-  for (const txn of TRANSACTIONS) {
-    await prisma.transaction.create({
-      data: {
-        amount: txn.amount,
-        type: txn.type,
-        category: txn.category,
-        date: new Date(txn.date),
-        description: txn.description,
-        reference: generateRef(),
-        userId: adminId,
-      },
-    });
-    created++;
+  // Check if transactions already exist to prevent duplicates
+  const existingCount = await prisma.transaction.count({ where: { userId: adminId } });
+  if (existingCount > 0) {
+    console.log(`   ↳ ${existingCount} transactions already exist, skipping seed`);
+  } else {
+    let created = 0;
+    for (const txn of TRANSACTIONS) {
+      await prisma.transaction.create({
+        data: {
+          amount: txn.amount,
+          type: txn.type,
+          category: txn.category,
+          date: new Date(txn.date),
+          description: txn.description,
+          reference: generateRef(),
+          userId: adminId,
+        },
+      });
+      created++;
+    }
+    console.log(`   ✅ Created ${created} transactions\n`);
   }
-
-  console.log(`   ✅ Created ${created} transactions\n`);
 
   // Print summary
   const counts = await prisma.transaction.groupBy({
