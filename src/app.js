@@ -19,7 +19,17 @@ const app = express();
 // --------------- Security Middleware ---------------
 
 // Set security-related HTTP headers
-app.use(helmet());
+// CSP relaxed only for Swagger UI's CDN assets; everything else is strict
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://unpkg.com", "'unsafe-inline'"],
+      styleSrc: ["'self'", "https://unpkg.com", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https://unpkg.com"],
+    },
+  },
+}));
 
 // Enable CORS for all origins in development
 app.use(cors({
