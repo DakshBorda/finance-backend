@@ -196,6 +196,37 @@ node scripts/test-phase4.js    # Dashboard Analytics (36 tests)
 | `npm start` | Start production server |
 | `node scripts/seed.js` | Seed database with sample data |
 
+## Deployed API
+
+- **Live URL:** https://finance-backend-z5xw.onrender.com
+- **API Docs:** https://finance-backend-z5xw.onrender.com/api/v1/docs
+- **Health Check:** https://finance-backend-z5xw.onrender.com/health
+
+> Free-tier instances spin down after inactivity. First request may take ~50 seconds.
+
+## Assumptions
+
+1. This is an **organization-wide** finance dashboard — all authenticated users see all transactions (not user-scoped)
+2. New users register with **VIEWER** role by default; only an Admin can promote roles
+3. **Soft delete** is used for all records — financial data is never permanently destroyed
+4. Amounts are stored as `Decimal(12,2)` — supports up to ₹9,999,999,999.99
+5. All dates are in **ISO 8601** format; future dates are not allowed for transactions
+6. Admin cannot delete or deactivate their own account (safety check)
+7. Transaction references are auto-generated (`TXN-YYYYMMDD-XXXX`) if not provided, but unique when specified
+8. Currency is single-currency (INR implied by seed data); multi-currency is out of scope
+
+## Design Decisions & Tradeoffs
+
+| Decision | Why | Tradeoff |
+|----------|-----|----------|
+| **Service Layer Pattern** | Separates business logic from HTTP handling; controllers stay thin | Slightly more files, but much easier to test and maintain |
+| **Decimal instead of Float** | Financial accuracy — Float causes rounding bugs (e.g., 0.1 + 0.2 ≠ 0.3) | Requires explicit conversion; serialized as strings in JSON |
+| **UUID primary keys** | Prevents ID enumeration attacks; no sequential guessing | Slightly larger than integers; less human-readable |
+| **Soft deletes** | Financial records should never be permanently lost for audit trails | Requires `isDeleted` filter on every query |
+| **Raw SQL for trends** | Prisma's `groupBy` can't do `TO_CHAR` date formatting or moving averages | Less portable across databases; tied to PostgreSQL |
+| **Dual-tier rate limiting** | Auth endpoints need stricter protection (brute-force) than general API | More configuration; must skip in test environment |
+| **JWT access + refresh pattern** | Short-lived access tokens (15min) limit damage from token theft | Client must handle token refresh flow |
+
 ## Security
 
 - Passwords hashed with bcryptjs (12 salt rounds)
