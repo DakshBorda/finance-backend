@@ -1,10 +1,5 @@
-/**
- * Application-wide constants.
- *
- * These mirror the Prisma enums so we can reference them in
- * validation, middleware, and business logic without importing
- * the Prisma client directly in those layers.
- */
+// Mirror Prisma enums here so validation and middleware layers
+// don't need to import the Prisma client directly.
 
 const ROLES = Object.freeze({
   ADMIN: 'ADMIN',

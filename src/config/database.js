@@ -18,10 +18,7 @@ if (process.env.NODE_ENV === 'production') {
   prisma = global.__prisma;
 }
 
-/**
- * Verify that the database connection is healthy.
- * Called once at server startup to fail-fast if the DB is unreachable.
- */
+
 async function connectDatabase() {
   try {
     await prisma.$connect();
@@ -32,10 +29,7 @@ async function connectDatabase() {
   }
 }
 
-/**
- * Gracefully close the database connection.
- * Should be called during shutdown to release connection pool.
- */
+
 async function disconnectDatabase() {
   await prisma.$disconnect();
   logger.info('Database connection closed');

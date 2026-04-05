@@ -1,8 +1,9 @@
 # Dependencies
 node_modules/
 
-# Environment variables
+# Environment
 .env
+.env.local
 
 # Prisma
 prisma/dev.db
@@ -15,19 +16,18 @@ logs/
 # IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# OS files
+# OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Coverage
 coverage/
+.nyc_output/
 
 # Build
 dist/
 build/
-
-# Misc
-version_check.txt
-
-/generated/prisma
