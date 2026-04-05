@@ -6,8 +6,13 @@ const { StatusCodes } = require('http-status-codes');
 
 const config = require('./config');
 const logger = require('./config/logger');
+const swaggerSpec = require('./config/swagger');
+const swaggerUi = require('swagger-ui-express');
 const ApiError = require('./utils/ApiError');
 const ApiResponse = require('./utils/ApiResponse');
+const errorHandler = require('./middlewares/errorHandler');
+const { apiLimiter } = require('./middlewares/rateLimiter');
+const routes = require('./routes');
 
 const app = express();
 
@@ -51,13 +56,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+// --------------- API Documentation ---------------
+
+app.use('/api/v1/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: 'Finance API Documentation',
+}));
+
 // --------------- API Routes ---------------
 
-// Routes will be mounted here in Phase 2
-// app.use('/api/v1/auth', authRoutes);
-// app.use('/api/v1/users', userRoutes);
-// app.use('/api/v1/transactions', transactionRoutes);
-// app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1', apiLimiter, routes);
 
 // --------------- 404 Handler ---------------
 
@@ -70,27 +77,6 @@ app.use((req, res, next) => {
 
 // --------------- Global Error Handler ---------------
 
-app.use((err, req, res, _next) => {
-  // Log the error for debugging
-  if (err.isOperational) {
-    logger.warn(`${err.statusCode} - ${err.message} - ${req.originalUrl}`);
-  } else {
-    logger.error('Unexpected error:', err);
-  }
-
-  const statusCode = err.statusCode || StatusCodes.INTERNAL_SERVER_ERROR;
-  const message = err.isOperational ? err.message : 'Something went wrong';
-
-  res.status(statusCode).json({
-    success: false,
-    error: {
-      code: err.errorCode || 'INTERNAL_ERROR',
-      message,
-      ...(err.errors && err.errors.length > 0 && { details: err.errors }),
-      // Include stack trace only in development
-      ...(config.env === 'development' && { stack: err.stack }),
-    },
-  });
-});
+app.use(errorHandler);
 
 module.exports = app;
